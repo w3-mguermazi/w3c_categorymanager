@@ -1,0 +1,32 @@
+.w3c_categorymanager .wrapper{
+    padding:2em;
+    font-size: 1.4em;
+}
+
+.w3c_categorymanager ul{
+    list-style: none;;
+}
+
+.w3c_categorymanager ul ul{
+    margin-left: 10px;
+    border-left: 1px solid;
+    margin-bottom: 20px;
+}
+
+.w3c_categorymanager a:hover{
+    text-decoration: none;
+}
+
+.w3c_categorymanager a:hover, .w3c_categorymanager a:hover .icon-color{
+    color: #a7a7a7;
+    transition: 0.5s;
+}
+
+.w3c_categorymanager .icon{
+    height: 1.4em;
+    width: 1.4em;
+}
+
+.w3c_categorymanager button{
+    border:none;
+}

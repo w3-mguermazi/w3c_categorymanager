@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.0">
+  <file source-language="en" datatype="plaintext" original="messages" date="2025-08-26">
+    <body>
+      <trans-unit id="mlang_labels_tablabel">
+        <target>Category Manager</target>
+      </trans-unit>
+      <trans-unit id="mlang_labels_tabdescr" resname="mlang_labels_tabdescr">
+        <source>Manage categories in a tree structure</source>
+      </trans-unit>
+      <trans-unit id="mlang_tabs_tab" resname="mlang_tabs_tab">
+        <source>Category Manager</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,37 @@
+<li>
+    <button 
+        class="toggle-category" 
+        data-uid="{category.uid}" 
+        data-state="{category.hidden}"
+        data-icon-on='{iconOn -> f:format.raw()}' 
+        data-icon-off='{iconOff -> f:format.raw()}'
+        >
+            <f:if condition="{category.hidden}">
+                <f:then>
+                    <core:icon identifier="actions-toggle-off"/>
+                </f:then>
+                <f:else>
+                    <core:icon identifier="actions-toggle-on"/>
+                </f:else>
+            </f:if>
+    </button>
+    <a href="{category.editUrl}" title="edit">
+        <span>{category.title} </span>
+        <core:icon identifier="actions-document-open"/>
+    </a>
+    <a href="{category.newChildUrl}" title="new">
+        <core:icon identifier="actions-document-new"/>
+    </a>
+
+    
+
+    <f:if condition="{category.children}" >
+        <ul>
+            <f:for each="{category.children}" as="child">
+                <f:render partial="Category/TreeNode" arguments="{category:child,iconOn:iconOn,iconOff:iconOff}" />
+            </f:for>
+        </ul>
+    </f:if>
+</li>
+
+

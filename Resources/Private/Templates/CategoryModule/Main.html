@@ -1,0 +1,26 @@
+{namespace be=TYPO3\CMS\Backend\ViewHelpers\}
+{namespace core=TYPO3\CMS\Core\ViewHelpers\}
+
+<f:layout name="Default" />
+
+<f:section name="Main">
+
+    <f:be.pageRenderer
+        includeJavaScriptModules="{
+            0: '@w3code/w3c_categorymanager/backend.js'
+        }"
+    />
+
+    <div class="w3c_categorymanager">
+        <div class="wrapper">
+            <h1>Gestion des catégories</h1>
+
+            <ul class="category-tree">
+                <f:for each="{categories}" as="category">
+                    <f:render partial="Category/TreeNode" arguments="{_all}" />
+                </f:for>
+            </ul>
+        </div>
+    </div>
+    
+</f:section>
