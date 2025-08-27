@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.0">
+  <file source-language="en" target-language="fr" datatype="plaintext" original="messages" date="2025-08-26T00:00:00Z" product-name="w3c_categorymanager">
+    <header/>
+    <body>
+
+      <!-- Titre du module -->
+      <trans-unit id="module.title" resname="module.title">
+        <source>Category Manager</source>
+        <target>Gestionnaire de catégories</target>
+      </trans-unit>
+
+      <!-- Actions sur les catégories -->
+      <trans-unit id="category.edit" resname="category.edit">
+        <source>Edit category</source>
+        <target>Modifier la catégorie</target>
+      </trans-unit>
+
+      <trans-unit id="category.newChild" resname="category.newChild">
+        <source>New subcategory</source>
+        <target>Nouvelle sous-catégorie</target>
+      </trans-unit>
+
+      <trans-unit id="category.toggleOn" resname="category.toggleOn">
+        <source>Activate category</source>
+        <target>Activer la catégorie</target>
+      </trans-unit>
+
+      <trans-unit id="category.toggleOff" resname="category.toggleOff">
+        <source>Deactivate category</source>
+        <target>Désactiver la catégorie</target>
+      </trans-unit>
+
+      <!-- Aucune catégorie -->
+      <trans-unit id="category.noneFound" resname="category.noneFound">
+        <source>No categories found</source>
+        <target>Aucune catégorie trouvée</target>
+      </trans-unit>
+
+      <!-- Messages AJAX -->
+      <trans-unit id="category.update.success" resname="category.update.success">
+        <source>Category updated successfully</source>
+        <target>Catégorie mise à jour avec succès</target>
+      </trans-unit>
+
+      <trans-unit id="category.update.error" resname="category.update.error">
+        <source>Error while updating category</source>
+        <target>Erreur lors de la mise à jour de la catégorie</target>
+      </trans-unit>
+
+    </body>
+  </file>
+</xliff>

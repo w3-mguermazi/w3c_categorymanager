@@ -1,26 +1,32 @@
 {namespace be=TYPO3\CMS\Backend\ViewHelpers\}
 {namespace core=TYPO3\CMS\Core\ViewHelpers\}
 
-<f:layout name="Default" />
+<f:layout name="Module" />
 
-<f:section name="Main">
+<f:section name="Content">
 
-    <f:be.pageRenderer
-        includeJavaScriptModules="{
-            0: '@w3code/w3c_categorymanager/backend.js'
-        }"
-    />
+    <div style="display: none;">
+        <div id="iconOn">{iconOn -> f:format.raw()}</div>
+        <div id="iconOff">{iconOff -> f:format.raw()}</div>
+    </div>
 
     <div class="w3c_categorymanager">
         <div class="wrapper">
-            <h1>Gestion des catégories</h1>
-
-            <ul class="category-tree">
-                <f:for each="{categories}" as="category">
-                    <f:render partial="Category/TreeNode" arguments="{_all}" />
-                </f:for>
-            </ul>
+            <h1><f:translate key="module.title" /></h1>
+            <f:if condition="{categories}">
+                <f:then>
+                    <ul class="category-tree">
+                        <f:for each="{categories}" as="category">
+                            <f:render partial="Category/TreeNode" arguments="{_all}" />
+                        </f:for>
+                    </ul>
+                </f:then>
+                <f:else>
+                    <f:translate key="category.noneFound" />
+                </f:else>
+            </f:if>
+                
         </div>
     </div>
-    
+
 </f:section>
