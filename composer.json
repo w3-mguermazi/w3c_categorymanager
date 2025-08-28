@@ -10,7 +10,7 @@
         }
     ],
     "replace": {
-        "typo3-ter/w3c_treecacheflush": "self.version"
+        "typo3-ter/w3c_categorymanager": "self.version"
     },
     "require": {
         "typo3/cms-core": "^13.4"
