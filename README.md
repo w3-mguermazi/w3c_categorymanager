@@ -20,7 +20,7 @@ Elle offre une interface utilisateur simplifiée pour :
 ### Installation
 Installer via Composer :  
 ```bash
-composer require w3-mguermazi/w3c-categorymanager
+composer require w3code/w3c-categorymanager
 ```
 
 ### Utilisation
@@ -55,7 +55,7 @@ It offers a simplified user interface to:
 ### Installation
 Install via Composer:  
 ```bash
-composer require w3-mguermazi/w3c-categorymanager
+composer require w3code/w3c-categorymanager
 ```
 
 ### Usage
