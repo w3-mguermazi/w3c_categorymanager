@@ -2,7 +2,7 @@
 
 ## 🇫🇷 Gestionnaire de Catégories
 
-![Capture d’écran](Documentation/Images/screenshot.png)
+![Capture d’écran](Documentation/Images/categorymanager.png)
 
 ### Description
 Cette extension TYPO3 permet de gérer facilement les catégories dans une structure arborescente.  
@@ -37,7 +37,7 @@ composer require w3-mguermazi/w3c-categorymanager
 
 ## 🇬🇧 Category Manager
 
-![Screenshot](Documentation/Images/screenshot.png)
+![Screenshot](Documentation/Images/categorymanager.png)
 
 ### Description
 This TYPO3 extension provides an easy way to manage categories in a tree structure.  
