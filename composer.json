@@ -9,6 +9,9 @@
             "email": "mehdi.guermazi@w3code.tn"
         }
     ],
+    "replace": {
+        "typo3-ter/w3c_treecacheflush": "self.version"
+    },
     "require": {
         "typo3/cms-core": "^13.4"
     },

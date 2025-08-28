@@ -80,7 +80,7 @@ class CategoryModuleController extends ActionController
             if (count($languages) > 0) {
                 $dropDownButton = $buttonBar->makeDropDownButton()
                     ->setLabel('Dropdown')
-                    ->setTitle('Save')
+                    ->setTitle(LocalizationUtility::translate('language.switch','w3c_categorymanager'))
                     ->setIcon($this->iconFactory->getIcon('module-lang'));
 
                 foreach( $languages as $k => $lang){

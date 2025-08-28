@@ -32,6 +32,11 @@
         <target>Aucune catégorie trouvée</target>
       </trans-unit>
 
+      <trans-unit id="language.switch" resname="language.switch">
+        <source>Switch language</source>
+        <target>Changer de langue</target>
+      </trans-unit>
+
     </body>
   </file>
 </xliff>
