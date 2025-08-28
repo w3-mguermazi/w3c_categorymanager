@@ -21,31 +21,15 @@
         <target>New subcategory</target>
       </trans-unit>
 
-      <trans-unit id="category.toggleOn" resname="category.toggleOn">
-        <source>Activate category</source>
-        <target>Activate category</target>
-      </trans-unit>
-
-      <trans-unit id="category.toggleOff" resname="category.toggleOff">
-        <source>Deactivate category</source>
-        <target>Deactivate category</target>
+      <trans-unit id="category.translate_to" resname="category.translate_to">
+        <source>Translate to</source>
+        <target>Translate to</target>
       </trans-unit>
 
       <!-- No categories -->
       <trans-unit id="category.noneFound" resname="category.noneFound">
         <source>No categories found</source>
         <target>No categories found</target>
-      </trans-unit>
-
-      <!-- AJAX messages -->
-      <trans-unit id="category.update.success" resname="category.update.success">
-        <source>Category updated successfully</source>
-        <target>Category updated successfully</target>
-      </trans-unit>
-
-      <trans-unit id="category.update.error" resname="category.update.error">
-        <source>Error while updating category</source>
-        <target>Error while updating category</target>
       </trans-unit>
 
     </body>

@@ -1,34 +1,45 @@
 <li>
-    <button 
-        class="toggle-category" 
-        data-uid="{category.uid}" 
-        data-state="{category.hidden}"
-        >
-            <f:if condition="{category.hidden}">
-                <f:then>
-                    <core:icon identifier="actions-toggle-off"/>
-                </f:then>
-                <f:else>
-                    <core:icon identifier="actions-toggle-on"/>
-                </f:else>
-            </f:if>
-    </button>
-    <a href="{category.editUrl}" title="{f:translate(key:'category.edit')}">
-        <span>{category.title} </span>
-        <core:icon identifier="actions-document-open"/>
-    </a>
-    <a href="{category.newChildUrl}" title="{f:translate(key:'category.newChild')}">
-        <core:icon identifier="actions-document-new"/>
-    </a>
-
-    
+    <f:if condition="{category.children}" >
+        <details>
+            <summary>
+    </f:if>
+            <div class="line">
+                <button 
+                    class="toggle-category" 
+                    data-uid="{category.uid}" 
+                    data-state="{category.hidden}"
+                    >
+                        <f:if condition="{category.hidden}">
+                            <f:then>
+                                <core:icon identifier="actions-toggle-off"/>
+                            </f:then>
+                            <f:else>
+                                <core:icon identifier="actions-toggle-on"/>
+                            </f:else>
+                        </f:if>
+                </button>
+                <span>{category.title} </span>
+                <span class="buttons">
+                    <f:for each="{category.translations}" as="translation">
+                        <a href="{translation.url}" title="{translation.title}" role="button" class="btn btn-sm btn-default">{translation.icon -> f:format.raw()}</a>
+                    </f:for>
+                    <a href="{category.editUrl}" title="{f:translate(key:'category.edit')}" role="button" class="btn btn-sm btn-default">
+                        <core:icon identifier="actions-document-open" size="small"/>
+                    </a>
+                    <a href="{category.newChildUrl}" title="{f:translate(key:'category.newChild')}" role="button" class="btn btn-sm btn-default">
+                        <core:icon identifier="actions-document-new" size="small"/>
+                    </a>
+                </span>
+            </div>
 
     <f:if condition="{category.children}" >
+        </summary>
         <ul>
             <f:for each="{category.children}" as="child">
                 <f:render partial="Category/TreeNode" arguments="{category:child,iconOn:iconOn,iconOff:iconOff}" />
             </f:for>
         </ul>
+        </details>
     </f:if>
 </li>
 

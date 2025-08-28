@@ -17,6 +17,7 @@ use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\Template\Components\Buttons\DropDown\DropDownItem;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use TYPO3\CMS\Core\Site\SiteFinder;
 
 #[AsController]
 class CategoryModuleController extends ActionController
@@ -25,6 +26,8 @@ class CategoryModuleController extends ActionController
 
     private UriBuilder $backendUriBuilder;
 
+    private IconFactory $iconFactory;
+
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
         UriBuilder $backendUriBuilder,    
@@ -32,6 +35,7 @@ class CategoryModuleController extends ActionController
     {
         $this->moduleTemplateFactory = $moduleTemplateFactory;
         $this->backendUriBuilder = $backendUriBuilder;
+        $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
     }
 
     public function mainAction(): ResponseInterface
@@ -40,10 +44,8 @@ class CategoryModuleController extends ActionController
         $pageRenderer->addCssFile('EXT:w3c_categorymanager/Resources/Public/Css/module.css');
         $pageRenderer->addJsFile('EXT:w3c_categorymanager/Resources/Public/JavaScript/backend.js');
 
-        $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-
-        $iconOn = str_replace(["\n", "\r"], '', $iconFactory->getIcon('actions-toggle-on', IconSize::SMALL)->render());
-        $iconOff = str_replace(["\n", "\r"], '', $iconFactory->getIcon('actions-toggle-off', IconSize::SMALL)->render());
+        $iconOn = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon('actions-toggle-on', IconSize::SMALL)->render());
+        $iconOff = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon('actions-toggle-off', IconSize::SMALL)->render());
 
 
         $pid = (int)($this->request->getQueryParams()['id'] ?? 0);
@@ -61,7 +63,7 @@ class CategoryModuleController extends ActionController
         );
         $shortcutButton = $buttonBar->makeLinkButton()
             ->setTitle('Create new category')
-            ->setIcon($iconFactory->getIcon('actions-document-new'))
+            ->setIcon($this->iconFactory->getIcon('actions-document-new'))
             ->setHref($this->backendUriBuilder->buildUriFromRoute(
                     'record_edit',
                     [
@@ -71,22 +73,38 @@ class CategoryModuleController extends ActionController
                     ]
                 ));
         $buttonBar->addButton($shortcutButton, ButtonBar::BUTTON_POSITION_RIGHT,2,);
+        
+        if($pid!=0){
+            $languages = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($pid)->getAllLanguages();
+        
+            if (count($languages) > 0) {
+                $dropDownButton = $buttonBar->makeDropDownButton()
+                    ->setLabel('Dropdown')
+                    ->setTitle('Save')
+                    ->setIcon($this->iconFactory->getIcon('module-lang'));
 
-        /* $dropDownButton = $buttonBar->makeDropDownButton()
-            ->setLabel('Dropdown')
-            ->setTitle('Save')
-            ->setIcon($iconFactory->getIcon('actions-heart'))
-            ->addItem(
-                GeneralUtility::makeInstance(DropDownItem::class)
-                    ->setLabel('Item')
-                    ->setHref('#'),
-            );
-        $buttonBar->addButton(
-            $dropDownButton,
-            ButtonBar::BUTTON_POSITION_RIGHT,
-            2,
-        ); */
-
+                foreach( $languages as $k => $lang){
+                    $dropDownButton->addItem(
+                        GeneralUtility::makeInstance(DropDownItem::class)
+                            ->setLabel($lang->getNavigationTitle())
+                            ->setHref($this->backendUriBuilder->buildUriFromRoute(
+                                'web_W3cCategoryManager',
+                                [
+                                    'id' => $pid,
+                                    'sys_language_uid' => $lang->getLanguageId()
+                                ]
+                            ))
+                    );
+                }
+                
+                $buttonBar->addButton(
+                    $dropDownButton,
+                    ButtonBar::BUTTON_POSITION_RIGHT,
+                    2,
+                );
+            }
+        }
+        
         $categories = $this->getCategoriesTree(0, $pid);
 
         $moduleTemplate->assign('categories', $categories);
@@ -98,6 +116,11 @@ class CategoryModuleController extends ActionController
 
     private function getCategoriesTree(int $parent = 0, int $pid = 0): array
     {
+        if($pid!=0){
+            $languages = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($pid)->getAllLanguages();
+        }
+        $currentLang = (int)($this->request->getQueryParams()['sys_language_uid'] ?? 0);
+
         $returnUrl = (string)$this->backendUriBuilder->buildUriFromRoute(
             'web_W3cCategoryManager',
             ['id' => $pid, 'action' => 'main'],
@@ -106,22 +129,29 @@ class CategoryModuleController extends ActionController
             ->getQueryBuilderForTable('sys_category');
         $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
 
+        
         $rows = $queryBuilder
-            ->select('*')
-            ->from('sys_category')
-            ->where(
-                $queryBuilder->expr()->eq('parent', $queryBuilder->createNamedParameter($parent, ParameterType::INTEGER)),
-                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, ParameterType::INTEGER))
-            )
-            ->orderBy('title', 'ASC')
-            ->executeQuery()
-            ->fetchAllAssociative();
+        ->select('*')
+        ->from('sys_category')
+        ->where(
+            $queryBuilder->expr()->eq('parent', $queryBuilder->createNamedParameter($parent, ParameterType::INTEGER)),
+            $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter($currentLang, ParameterType::INTEGER)),
+            $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, ParameterType::INTEGER))
+        )
+        ->orderBy('title', 'ASC')
+        ->executeQuery()
+        ->fetchAllAssociative();
+        
 
         $tree = [];
         foreach ($rows as $row) {
             // Récursion pour les enfants
-            $children = $this->getCategoriesTree((int)$row['uid'], $pid);
+            if($currentLang==0){
+                $children = $this->getCategoriesTree((int)$row['uid'], $pid);
+            }
+            else{
+                $children = $this->getCategoriesTree((int)$row['l10n_parent'], $pid);
+            }
             $row['children'] = $children;
 
             // URL d'édition
@@ -137,11 +167,34 @@ class CategoryModuleController extends ActionController
             $row['newChildUrl'] = $this->backendUriBuilder->buildUriFromRoute(
                 'record_edit',
                 [
-                    'edit' => ['sys_category' => [1 => 'new']],
-                    'defVals' => ['sys_category' => ['parent' => $row['uid'], 'pid' => $pid]],
+                    'edit' => ['sys_category' => [$pid => 'new']],
+                    'defVals' => ['sys_category' => ['parent' => $row['uid']]],
                     'returnUrl' => $returnUrl
                 ]
             );
+
+            if ( $pid != 0 && $currentLang == 0 ) {
+                foreach($languages as $lang){
+                    // Si pas de traduction on ajoute le bouton
+                    if(!$this->categoryTranslationExists($row['uid'],$lang->getLanguageId())){
+                        $row['translations'][$lang->getLanguageId()]['url'] = $this->backendUriBuilder->buildUriFromRoute(
+                            'record_edit',
+                            [
+                                'edit' => ['sys_category' => [$pid => 'new']],
+                                'defVals' => ['sys_category' => [
+                                        'parent' => $row['parent'],
+                                        'l10n_parent' => $row['uid'],
+                                        'sys_language_uid' => $lang->getLanguageId()
+                                    ]
+                                ],
+                                'returnUrl' => $returnUrl
+                            ]
+                        );
+                        $row['translations'][$lang->getLanguageId()]['icon'] = $this->iconFactory->getIcon($lang->getFlagIdentifier(), IconSize::SMALL)->render();
+                        $row['translations'][$lang->getLanguageId()]['title'] = LocalizationUtility::translate('category.translate_to','w3c_categorymanager').' '.$lang->getNavigationTitle();
+                    }
+                }
+            }
 
             $tree[] = $row;
         }
@@ -188,5 +241,37 @@ class CategoryModuleController extends ActionController
         return $response;
         
     }
+
+    private function categoryTranslationExists(int $categoryUid, int $languageUid): bool
+    {
+        if ($languageUid === 0) {
+            // Pas de traduction à vérifier pour la langue par défaut
+            return true;
+        }
+
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('sys_category');
+
+        $queryBuilder->getRestrictions()->removeAll();
+
+        $count = $queryBuilder
+            ->count('uid')
+            ->from('sys_category')
+            ->where(
+                $queryBuilder->expr()->eq(
+                    'l10n_parent',
+                    $queryBuilder->createNamedParameter($categoryUid, ParameterType::INTEGER)
+                ),
+                $queryBuilder->expr()->eq(
+                    'sys_language_uid',
+                    $queryBuilder->createNamedParameter($languageUid, ParameterType::INTEGER)
+                )
+            )
+            ->executeQuery()
+            ->fetchOne();
+
+        return ((int)$count > 0);
+    }
+
 
 }
