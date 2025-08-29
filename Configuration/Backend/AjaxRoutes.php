@@ -7,4 +7,8 @@ return [
         'path' => '/w3c-categorymanager/categorymodule/togglehide',
         'target' => CategoryModuleController::class . '::toggleHideAction',
     ],
+    'w3c-categorymanager_categorymodule_toggleexpand' => [
+        'path' => '/w3c-categorymanager/categorymodule/toggleexpand',
+        'target' => CategoryModuleController::class . '::toggleExpandAction',
+    ],
 ];

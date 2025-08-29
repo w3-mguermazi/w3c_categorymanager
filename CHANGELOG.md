@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - **Sorting feature** in the category tree view (by title , or sorting field).
+- **Persisted expand/collapse state** of categories in the tree view, stored in backend user preferences.
 
 ### Removed
 - **"Add subcategory" button** when viewing categories in a non-default language.  

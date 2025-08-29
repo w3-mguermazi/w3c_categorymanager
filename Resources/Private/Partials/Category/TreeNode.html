@@ -1,6 +1,6 @@
 <li>
     <f:if condition="{category.children}" >
-        <details>
+        <details data-uid="{category.uid}"  {f:if(condition: category.expanded, then: 'open')} >
             <summary>
     </f:if>
             <div class="line">
