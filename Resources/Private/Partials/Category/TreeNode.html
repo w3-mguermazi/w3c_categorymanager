@@ -26,9 +26,11 @@
                     <a href="{category.editUrl}" title="{f:translate(key:'category.edit')}" role="button" class="btn btn-sm btn-default">
                         <core:icon identifier="actions-document-open" size="small"/>
                     </a>
-                    <a href="{category.newChildUrl}" title="{f:translate(key:'category.newChild')}" role="button" class="btn btn-sm btn-default">
-                        <core:icon identifier="actions-document-new" size="small"/>
-                    </a>
+                    <f:if condition="{category.newChildUrl}">
+                        <a href="{category.newChildUrl}" title="{f:translate(key:'category.newChild')}" role="button" class="btn btn-sm btn-default">
+                            <core:icon identifier="actions-document-new" size="small"/>
+                        </a>
+                    </f:if>
                 </span>
             </div>
 
