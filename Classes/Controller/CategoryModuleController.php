@@ -19,6 +19,8 @@ use TYPO3\CMS\Backend\Template\Components\Buttons\DropDown\DropDownItem;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+
 
 #[AsController]
 class CategoryModuleController extends ActionController
@@ -107,6 +109,10 @@ class CategoryModuleController extends ActionController
 
     private function getCategoriesTree(int $parent = 0): array
     {
+        /** @var BackendUserAuthentication $backendUser */
+        $backendUser = $GLOBALS['BE_USER'];
+        $expandedNodes = $backendUser->uc['w3c_categorymanager']['expandedNodes'] ?? [];
+
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('sys_category');
         $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
@@ -127,6 +133,11 @@ class CategoryModuleController extends ActionController
 
         $tree = [];
         foreach ($rows as $row) {
+            $row['expanded'] = false;
+            if($expandedNodes && in_array($row['uid'], $expandedNodes)){
+                $row['expanded'] = true;
+            }
+
             // Récursion pour les enfants
             $parent = $row['uid'];
             if( $this->currentLang != 0 ){
@@ -218,6 +229,55 @@ class CategoryModuleController extends ActionController
                 'success' => true,
                 'uid' => $uid,
                 'hidden' => $hidden
+            ];
+
+            $response->getBody()->write(
+                json_encode(['result' => $result], JSON_THROW_ON_ERROR),
+            );
+
+            return $response;
+        }
+
+        $result = ['success' => false];
+        $response->getBody()->write(
+                json_encode(['result' => $result], JSON_THROW_ON_ERROR),
+            );
+
+        return $response;
+        
+    }
+
+    public function toggleExpandAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $response = $this->responseFactory->createResponse()
+            ->withHeader('Content-Type', 'application/json; charset=utf-8');
+        $data = json_decode($request->getBody()->getContents(), true);
+        $uid = (int)$data['uid'];
+        $expand = (int)$data['state'];
+
+        if ($uid > 0) {
+            /** @var BackendUserAuthentication $backendUser */
+            $backendUser = $GLOBALS['BE_USER'];
+            $expandedNodes = $backendUser->uc['w3c_categorymanager']['expandedNodes'] ?? [];
+            if($expand){
+                if(!$expandedNodes || !in_array($uid, $expandedNodes)){
+                    $expandedNodes[] = $uid;
+                }
+            } else {
+                if($expandedNodes && in_array($uid, $expandedNodes)){
+                    $key = array_search($uid, $expandedNodes);
+                    if($key !== false){
+                        unset($expandedNodes[$key]);
+                    }
+                }
+            }
+            $backendUser->uc['w3c_categorymanager']['expandedNodes'] = $expandedNodes;
+            $backendUser->writeUC();
+
+            $result = [
+                'success' => true,
+                'uid' => $uid,
+                'expand' => $expand
             ];
 
             $response->getBody()->write(
