@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [13.4.2] - 2025-08-29
+
+### Added
+- **TYPO3 v12 compatibility** this version is now compatible with TYPO3 v12 and v13.
+- **hover on line** ui upgrade with hover background highlight.
+
 
 ## [13.4.1] - 2025-08-29
 
