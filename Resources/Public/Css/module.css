@@ -48,11 +48,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between; /* espace entre le titre et les boutons */
+    margin-right: 15rem;
+}
+
+.w3c_categorymanager .category-tree .line:hover {
+    background-color: #f0f0f0; /* couleur de fond au survol */
+    transition: 0.5s;
 }
 
 .w3c_categorymanager .category-tree .line > span.buttons {
     margin-left: auto; /* pousse le bloc complètement à droite */
-    padding-right: 15rem;
     display: flex;
     gap: 0.25rem; /* petit espace entre les boutons */
 }
@@ -93,31 +98,8 @@
   background-position: calc(-2 * var(--radius)) 0;
 }
 
-/* .w3c_categorymanager ul{
-    list-style: none;;
-}
-
-.w3c_categorymanager ul ul{
-    margin-left: 10px;
-    border-left: 1px solid;
-    margin-bottom: 20px;
-}
-
-.w3c_categorymanager a:hover{
-    text-decoration: none;
-}
-
-.w3c_categorymanager a:hover, .w3c_categorymanager a:hover .icon-color{
-    color: #a7a7a7;
-    transition: 0.5s;
-}
-
-.w3c_categorymanager .icon{
-    height: 1.4em;
-    width: 1.4em;
-}
-*/
-
 .w3c_categorymanager button{
     border:none;
+    background: transparent;
 }
+

@@ -20,6 +20,8 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Imaging\Icon;
 
 
 #[AsController]
@@ -50,6 +52,20 @@ class CategoryModuleController extends ActionController
 
     private ModuleTemplate $moduleTemplate;
 
+    private int $typo3Version;
+
+    private string $iconOn = '';
+    
+    private string $iconOff = '';
+
+    private array $languageFlags = [];
+
+    private Icon $addNewIcon;
+
+    private Icon $langIcon;
+
+    private Icon $sortIcon;
+
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
         UriBuilder $backendUriBuilder,    
@@ -62,6 +78,8 @@ class CategoryModuleController extends ActionController
 
     public function initializeAction(): void
     {
+        $this->typo3Version = GeneralUtility::makeInstance(Typo3Version::class)->getMajorVersion();
+        
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $this->moduleTemplate->setTitle(LocalizationUtility::translate('module.title','w3c_categorymanager'));
 
@@ -85,6 +103,8 @@ class CategoryModuleController extends ActionController
             ],
         );
 
+        $this->buildIcons();
+
     }
 
     public function mainAction(): ResponseInterface
@@ -93,17 +113,14 @@ class CategoryModuleController extends ActionController
         $pageRenderer->addCssFile('EXT:w3c_categorymanager/Resources/Public/Css/module.css');
         $pageRenderer->addJsFile('EXT:w3c_categorymanager/Resources/Public/JavaScript/backend.js');
 
-        $iconOn = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon('actions-toggle-on', IconSize::SMALL)->render());
-        $iconOff = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon('actions-toggle-off', IconSize::SMALL)->render());
-
         $this->buildMenu();
 
         $categories = $this->getCategoriesTree(0);
 
         $this->moduleTemplate->assign('categories', $categories);
-        $this->moduleTemplate->assign('iconOn', $iconOn);
-        $this->moduleTemplate->assign('iconOff', $iconOff);
-        
+        $this->moduleTemplate->assign('iconOn', $this->iconOn);
+        $this->moduleTemplate->assign('iconOff', $this->iconOff);
+
         return $this->moduleTemplate->renderResponse('CategoryModule/Main');
     }
 
@@ -195,7 +212,8 @@ class CategoryModuleController extends ActionController
                                 'returnUrl' => $this->returnUrl
                             ]
                         );
-                        $row['translations'][$lang->getLanguageId()]['icon'] = $this->iconFactory->getIcon($lang->getFlagIdentifier(), IconSize::SMALL)->render();
+
+                        $row['translations'][$lang->getLanguageId()]['icon'] = $this->languageFlags[$lang->getLanguageId()] ?? '';
                         $row['translations'][$lang->getLanguageId()]['title'] = LocalizationUtility::translate('category.translate_to','w3c_categorymanager').' '.$lang->getNavigationTitle();
                     }
                 }
@@ -335,11 +353,11 @@ class CategoryModuleController extends ActionController
         // Ajouter un bouton
         $newCategoryButton = $buttonBar->makeLinkButton()
             ->setTitle('Create new category')
-            ->setIcon($this->iconFactory->getIcon('actions-document-new'))
+            ->setIcon($this->addNewIcon)
             ->setHref($this->backendUriBuilder->buildUriFromRoute(
                     'record_edit',
                     [
-                        'edit' => ['sys_category' => [1 => 'new']],
+                        'edit' => ['sys_category' => [$this->pid => 'new']],
                         'defVals' => ['sys_category' => ['pid' => $this->pid]],
                         'returnUrl' => $this->returnUrl
                     ]
@@ -351,7 +369,7 @@ class CategoryModuleController extends ActionController
             $languagesDropDownButton = $buttonBar->makeDropDownButton()
                 ->setLabel( LocalizationUtility::translate( 'language.switch', 'w3c_categorymanager' ) )
                 ->setTitle( LocalizationUtility::translate( 'language.switch', 'w3c_categorymanager' ) )
-                ->setIcon( $this->iconFactory->getIcon( 'module-lang' ) );
+                ->setIcon( $this->langIcon );
 
             foreach( $this->siteLanguages as $lang){
                 $languagesDropDownButton->addItem(
@@ -377,7 +395,7 @@ class CategoryModuleController extends ActionController
         $sortingDropDownButton = $buttonBar->makeDropDownButton()
             ->setLabel(LocalizationUtility::translate('sorting.dropdownLabel','w3c_categorymanager'))
             ->setTitle(LocalizationUtility::translate('sorting.dropdownLabel','w3c_categorymanager'))
-            ->setIcon($this->iconFactory->getIcon('actions-sort-amount'));
+            ->setIcon($this->sortIcon);
         
         foreach( $this->sortingOptions as $sortingOption){
             $sortingDropDownButton->addItem(
@@ -414,5 +432,26 @@ class CategoryModuleController extends ActionController
         );
     }
 
+    private function buildIcons(){
+        if($this->typo3Version == 12){
+            $this->iconOn = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon('actions-toggle-on', Icon::SIZE_SMALL)->render());
+            $this->iconOff = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon('actions-toggle-off', Icon::SIZE_SMALL)->render());
+            $this->addNewIcon = $this->iconFactory->getIcon('actions-document-new', Icon::SIZE_SMALL);
+            $this->langIcon = $this->iconFactory->getIcon( 'module-lang', Icon::SIZE_SMALL );
+            $this->sortIcon = $this->iconFactory->getIcon( 'actions-sort-amount', Icon::SIZE_SMALL );
+            foreach($this->siteLanguages as $lang){
+                $this->languageFlags[$lang->getLanguageId()] = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon($lang->getFlagIdentifier(), Icon::SIZE_SMALL)->render());
+            }
+        }else{
+            $this->iconOn = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon('actions-toggle-on', IconSize::SMALL)->render());
+            $this->iconOff = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon('actions-toggle-off', IconSize::SMALL)->render());
+            $this->addNewIcon = $this->iconFactory->getIcon('actions-document-new', IconSize::SMALL);
+            $this->langIcon = $this->iconFactory->getIcon( 'module-lang', IconSize::SMALL );
+            $this->sortIcon = $this->iconFactory->getIcon( 'actions-sort-amount', IconSize::SMALL );
+            foreach($this->siteLanguages as $lang){
+                $this->languageFlags[$lang->getLanguageId()] = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon($lang->getFlagIdentifier(), IconSize::SMALL)->render());
+            }
+        }
+    }
 
 }
