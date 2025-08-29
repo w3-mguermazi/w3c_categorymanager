@@ -37,6 +37,21 @@
         <target>Changer de langue</target>
       </trans-unit>
 
+      <trans-unit id="sorting.dropdownLabel" resname="sorting.dropdownLabel">
+        <source>Sorting</source>
+        <target>Trier par</target>
+      </trans-unit>
+
+      <trans-unit id="sorting.title" resname="sorting.title">
+        <source>Title</source>
+        <target>Titre</target>
+      </trans-unit>
+
+      <trans-unit id="sorting.sorting" resname="sorting.sorting">
+        <source>Sorting</source>
+        <target>Champ de tri</target>
+      </trans-unit>
+
     </body>
   </file>
 </xliff>

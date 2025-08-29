@@ -37,6 +37,31 @@
         <target>Switch language</target>
       </trans-unit>
 
+      <trans-unit id="sorting.dropdownLabel" resname="sorting.dropdownLabel">
+        <source>Sorting</source>
+        <target>Sorting</target>
+      </trans-unit>
+
+      <trans-unit id="sorting.title" resname="sorting.title">
+        <source>Title</source>
+        <target>Title</target>
+      </trans-unit>
+
+      <trans-unit id="sorting.sorting" resname="sorting.sorting">
+        <source>Sorting</source>
+        <target>Sorting</target>
+      </trans-unit>
+
+      <trans-unit id="sorting.direction.ASC" resname="sorting.direction.ASC">
+        <source>Ascending</source>
+        <target>Ascending</target>
+      </trans-unit>
+
+      <trans-unit id="sorting.direction.DESC" resname="sorting.direction.DESC">
+        <source>Descending</source>
+        <target>Descending</target>
+      </trans-unit>
+
     </body>
   </file>
 </xliff>

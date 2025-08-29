@@ -18,6 +18,7 @@ use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\Template\Components\Buttons\DropDown\DropDownItem;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Backend\Template\ModuleTemplate;
 
 #[AsController]
 class CategoryModuleController extends ActionController
@@ -27,6 +28,25 @@ class CategoryModuleController extends ActionController
     private UriBuilder $backendUriBuilder;
 
     private IconFactory $iconFactory;
+
+    private array $sortingOptions = [
+        'title',
+        'sorting'
+    ];
+
+    private string $sortingBy = 'title';
+
+    private string $sortingDirection = 'ASC';
+
+    private int $pid = 0;
+
+    private array $siteLanguages = [];
+
+    private int $currentLang = 0;
+
+    private string $returnUrl;
+
+    private ModuleTemplate $moduleTemplate;
 
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
@@ -38,6 +58,33 @@ class CategoryModuleController extends ActionController
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
     }
 
+    public function initializeAction(): void
+    {
+        $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $this->moduleTemplate->setTitle(LocalizationUtility::translate('module.title','w3c_categorymanager'));
+
+        $this->pid = (int)($this->request->getQueryParams()['id'] ?? 0);
+        if($this->pid!=0){
+            $this->siteLanguages = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($this->pid)->getAllLanguages();
+        }
+        $this->currentLang = (int)($this->request->getQueryParams()['sys_language_uid'] ?? 0);
+
+        $this->sortingBy = $this->request->getQueryParams()['sortingBy'] ?? 'title';
+        $this->sortingDirection = $this->request->getQueryParams()['sortingDirection'] ?? 'ASC';
+
+        $this->returnUrl = (string)$this->backendUriBuilder->buildUriFromRoute(
+            'web_W3cCategoryManager',
+            [
+                'id' => $this->pid, 
+                'action' => 'main',
+                'sys_language_uid' => $this->currentLang,
+                'sortingBy' => $this->sortingBy,
+                'sortingDirection' => $this->sortingDirection
+            ],
+        );
+
+    }
+
     public function mainAction(): ResponseInterface
     {
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
@@ -47,84 +94,19 @@ class CategoryModuleController extends ActionController
         $iconOn = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon('actions-toggle-on', IconSize::SMALL)->render());
         $iconOff = str_replace(["\n", "\r"], '', $this->iconFactory->getIcon('actions-toggle-off', IconSize::SMALL)->render());
 
+        $this->buildMenu();
 
-        $pid = (int)($this->request->getQueryParams()['id'] ?? 0);
+        $categories = $this->getCategoriesTree(0);
 
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $moduleTemplate->setTitle(LocalizationUtility::translate('module.title','w3c_categorymanager'));
-
-        // Récupérer le composant de boutons
-        $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
-
-        // Ajouter un bouton
-        $returnUrl = (string)$this->backendUriBuilder->buildUriFromRoute(
-            'web_W3cCategoryManager',
-            ['id' => $pid, 'action' => 'main'],
-        );
-        $shortcutButton = $buttonBar->makeLinkButton()
-            ->setTitle('Create new category')
-            ->setIcon($this->iconFactory->getIcon('actions-document-new'))
-            ->setHref($this->backendUriBuilder->buildUriFromRoute(
-                    'record_edit',
-                    [
-                        'edit' => ['sys_category' => [1 => 'new']],
-                        'defVals' => ['sys_category' => ['pid' => $pid]],
-                        'returnUrl' => $returnUrl
-                    ]
-                ));
-        $buttonBar->addButton($shortcutButton, ButtonBar::BUTTON_POSITION_RIGHT,2,);
+        $this->moduleTemplate->assign('categories', $categories);
+        $this->moduleTemplate->assign('iconOn', $iconOn);
+        $this->moduleTemplate->assign('iconOff', $iconOff);
         
-        if($pid!=0){
-            $languages = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($pid)->getAllLanguages();
-        
-            if (count($languages) > 0) {
-                $dropDownButton = $buttonBar->makeDropDownButton()
-                    ->setLabel('Dropdown')
-                    ->setTitle(LocalizationUtility::translate('language.switch','w3c_categorymanager'))
-                    ->setIcon($this->iconFactory->getIcon('module-lang'));
-
-                foreach( $languages as $k => $lang){
-                    $dropDownButton->addItem(
-                        GeneralUtility::makeInstance(DropDownItem::class)
-                            ->setLabel($lang->getNavigationTitle())
-                            ->setHref($this->backendUriBuilder->buildUriFromRoute(
-                                'web_W3cCategoryManager',
-                                [
-                                    'id' => $pid,
-                                    'sys_language_uid' => $lang->getLanguageId()
-                                ]
-                            ))
-                    );
-                }
-                
-                $buttonBar->addButton(
-                    $dropDownButton,
-                    ButtonBar::BUTTON_POSITION_RIGHT,
-                    2,
-                );
-            }
-        }
-        
-        $categories = $this->getCategoriesTree(0, $pid);
-
-        $moduleTemplate->assign('categories', $categories);
-        $moduleTemplate->assign('iconOn', $iconOn);
-        $moduleTemplate->assign('iconOff', $iconOff);
-        
-        return $moduleTemplate->renderResponse('CategoryModule/Main');
+        return $this->moduleTemplate->renderResponse('CategoryModule/Main');
     }
 
-    private function getCategoriesTree(int $parent = 0, int $pid = 0): array
+    private function getCategoriesTree(int $parent = 0): array
     {
-        if($pid!=0){
-            $languages = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($pid)->getAllLanguages();
-        }
-        $currentLang = (int)($this->request->getQueryParams()['sys_language_uid'] ?? 0);
-
-        $returnUrl = (string)$this->backendUriBuilder->buildUriFromRoute(
-            'web_W3cCategoryManager',
-            ['id' => $pid, 'action' => 'main'],
-        );
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('sys_category');
         $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
@@ -135,10 +117,10 @@ class CategoryModuleController extends ActionController
         ->from('sys_category')
         ->where(
             $queryBuilder->expr()->eq('parent', $queryBuilder->createNamedParameter($parent, ParameterType::INTEGER)),
-            $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter($currentLang, ParameterType::INTEGER)),
-            $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, ParameterType::INTEGER))
+            $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter($this->currentLang, ParameterType::INTEGER)),
+            $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($this->pid, ParameterType::INTEGER))
         )
-        ->orderBy('title', 'ASC')
+        ->orderBy($this->sortingBy, $this->sortingDirection)
         ->executeQuery()
         ->fetchAllAssociative();
         
@@ -146,48 +128,60 @@ class CategoryModuleController extends ActionController
         $tree = [];
         foreach ($rows as $row) {
             // Récursion pour les enfants
-            if($currentLang==0){
-                $children = $this->getCategoriesTree((int)$row['uid'], $pid);
+            $parent = $row['uid'];
+            if( $this->currentLang != 0 ){
+                $parent = $row['l10n_parent'];
             }
-            else{
-                $children = $this->getCategoriesTree((int)$row['l10n_parent'], $pid);
-            }
-            $row['children'] = $children;
+            $row['children'] = $this->getCategoriesTree((int)$parent);
 
             // URL d'édition
             $row['editUrl'] = $this->backendUriBuilder->buildUriFromRoute(
                 'record_edit',
                 [
-                    'edit' => ['sys_category' => [$row['uid'] => 'edit']],
-                    'returnUrl' => $returnUrl
+                    'edit' => [
+                        'sys_category' => [
+                            $row['uid'] => 'edit'
+                        ]
+                    ],
+                    'returnUrl' => $this->returnUrl
                 ]
             );
 
-            // URL création sous-catégorie
-            $row['newChildUrl'] = $this->backendUriBuilder->buildUriFromRoute(
-                'record_edit',
-                [
-                    'edit' => ['sys_category' => [$pid => 'new']],
-                    'defVals' => ['sys_category' => ['parent' => $row['uid']]],
-                    'returnUrl' => $returnUrl
-                ]
-            );
+            if( $this->currentLang == 0 ){
+                // URL création sous-catégorie
+                $row['newChildUrl'] = $this->backendUriBuilder->buildUriFromRoute(
+                    'record_edit',
+                    [
+                        'edit' => [
+                            'sys_category' => [
+                                $this->pid => 'new'
+                            ]
+                        ],
+                        'defVals' => [
+                            'sys_category' => [
+                                'parent' => $parent,
+                            ]
+                        ],
+                        'returnUrl' => $this->returnUrl
+                    ]
+                );
+            }
 
-            if ( $pid != 0 && $currentLang == 0 ) {
-                foreach($languages as $lang){
+            if ( $this->pid != 0 && $this->currentLang == 0 && count($this->siteLanguages) > 0) {
+                foreach($this->siteLanguages as $lang){
                     // Si pas de traduction on ajoute le bouton
                     if(!$this->categoryTranslationExists($row['uid'],$lang->getLanguageId())){
                         $row['translations'][$lang->getLanguageId()]['url'] = $this->backendUriBuilder->buildUriFromRoute(
                             'record_edit',
                             [
-                                'edit' => ['sys_category' => [$pid => 'new']],
+                                'edit' => ['sys_category' => [$this->pid => 'new']],
                                 'defVals' => ['sys_category' => [
                                         'parent' => $row['parent'],
                                         'l10n_parent' => $row['uid'],
                                         'sys_language_uid' => $lang->getLanguageId()
                                     ]
                                 ],
-                                'returnUrl' => $returnUrl
+                                'returnUrl' => $this->returnUrl
                             ]
                         );
                         $row['translations'][$lang->getLanguageId()]['icon'] = $this->iconFactory->getIcon($lang->getFlagIdentifier(), IconSize::SMALL)->render();
@@ -271,6 +265,93 @@ class CategoryModuleController extends ActionController
             ->fetchOne();
 
         return ((int)$count > 0);
+    }
+
+    private function buildMenu(): void
+    {
+        // Récupérer le composant de boutons
+        $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
+
+        // Ajouter un bouton
+        $newCategoryButton = $buttonBar->makeLinkButton()
+            ->setTitle('Create new category')
+            ->setIcon($this->iconFactory->getIcon('actions-document-new'))
+            ->setHref($this->backendUriBuilder->buildUriFromRoute(
+                    'record_edit',
+                    [
+                        'edit' => ['sys_category' => [1 => 'new']],
+                        'defVals' => ['sys_category' => ['pid' => $this->pid]],
+                        'returnUrl' => $this->returnUrl
+                    ]
+                ));
+        $buttonBar->addButton($newCategoryButton, ButtonBar::BUTTON_POSITION_RIGHT, 2);
+
+        if ($this->pid != 0 && count($this->siteLanguages) > 0) {
+
+            $languagesDropDownButton = $buttonBar->makeDropDownButton()
+                ->setLabel( LocalizationUtility::translate( 'language.switch', 'w3c_categorymanager' ) )
+                ->setTitle( LocalizationUtility::translate( 'language.switch', 'w3c_categorymanager' ) )
+                ->setIcon( $this->iconFactory->getIcon( 'module-lang' ) );
+
+            foreach( $this->siteLanguages as $lang){
+                $languagesDropDownButton->addItem(
+                    GeneralUtility::makeInstance(DropDownItem::class)
+                        ->setLabel($lang->getNavigationTitle())
+                        ->setHref($this->backendUriBuilder->buildUriFromRoute(
+                            'web_W3cCategoryManager',
+                            [
+                                'id' => $this->pid,
+                                'sys_language_uid' => $lang->getLanguageId()
+                            ]
+                        ))
+                );
+            }
+            
+            $buttonBar->addButton(
+                $languagesDropDownButton,
+                ButtonBar::BUTTON_POSITION_RIGHT,
+                2,
+            );
+        }
+
+        $sortingDropDownButton = $buttonBar->makeDropDownButton()
+            ->setLabel(LocalizationUtility::translate('sorting.dropdownLabel','w3c_categorymanager'))
+            ->setTitle(LocalizationUtility::translate('sorting.dropdownLabel','w3c_categorymanager'))
+            ->setIcon($this->iconFactory->getIcon('actions-sort-amount'));
+        
+        foreach( $this->sortingOptions as $sortingOption){
+            $sortingDropDownButton->addItem(
+                GeneralUtility::makeInstance(DropDownItem::class)
+                    ->setLabel(LocalizationUtility::translate('sorting.' . $sortingOption, 'w3c_categorymanager').' '.LocalizationUtility::translate('sorting.direction.ASC', 'w3c_categorymanager'))
+                    ->setHref($this->backendUriBuilder->buildUriFromRoute(
+                        'web_W3cCategoryManager',
+                        [
+                            'id' => $this->pid,
+                            'sys_language_uid' => $this->currentLang,
+                            'sortingBy' => $sortingOption,
+                            'sortingDirection' => 'ASC',
+                        ]
+                    ))
+            );
+            $sortingDropDownButton->addItem(
+                GeneralUtility::makeInstance(DropDownItem::class)
+                    ->setLabel(LocalizationUtility::translate('sorting.' . $sortingOption, 'w3c_categorymanager').' '.LocalizationUtility::translate('sorting.direction.DESC', 'w3c_categorymanager'))
+                    ->setHref($this->backendUriBuilder->buildUriFromRoute(
+                        'web_W3cCategoryManager',
+                        [
+                            'id' => $this->pid,
+                            'sys_language_uid' => $this->currentLang,
+                            'sortingBy' => $sortingOption,
+                            'sortingDirection' => 'DESC',
+                        ]
+                    ))
+            );
+        }
+        $buttonBar->addButton(
+            $sortingDropDownButton,
+            ButtonBar::BUTTON_POSITION_RIGHT,
+            2,
+        );
     }
 
 
