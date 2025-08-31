@@ -1,0 +1,19 @@
+<html
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+    data-namespace-typo3-fluid="true">
+
+    <f:be.pageRenderer
+        includeCssFiles="{0: 'EXT:w3c_category_manager/Resources/Public/Css/style.css'}"
+        includeJavaScriptModules="{0: '@w3code/w3c_category_manager/script.js'}"
+    />
+
+    <div class="module {moduleClass}" data-module-id="{moduleId}" data-module-name="{moduleName}">
+        <f:if condition="{docHeader.enabled}">
+            <f:render partial="DocHeader" arguments="{docHeader:docHeader}" />
+        </f:if>
+        <div class="module-body t3js-module-body">
+            <f:render section="Content" />
+        </div>
+    </div>
+</html>

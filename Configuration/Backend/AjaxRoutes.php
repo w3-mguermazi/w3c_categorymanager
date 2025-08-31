@@ -1,14 +1,14 @@
 <?php
 
-use W3code\W3cCategorymanager\Controller\CategoryModuleController;
+use W3code\W3cCategoryManager\Controller\AjaxModuleController;
 
 return [
-    'w3c-categorymanager_categorymodule_togglehide' => [
-        'path' => '/w3c-categorymanager/categorymodule/togglehide',
-        'target' => CategoryModuleController::class . '::toggleHideAction',
+    'w3c_category_manager_toggle_hide' => [
+        'path' => '/module/W3cCategoryManager/ToggleHide',
+        'target' => AjaxModuleController::class . '::toggleHideAction',
     ],
-    'w3c-categorymanager_categorymodule_toggleexpand' => [
-        'path' => '/w3c-categorymanager/categorymodule/toggleexpand',
-        'target' => CategoryModuleController::class . '::toggleExpandAction',
+    'w3c_category_manager_toggle_expand' => [
+        'path' => '/module/W3cCategoryManager/ToggleExpand',
+        'target' => AjaxModuleController::class . '::toggleExpandAction',
     ],
 ];

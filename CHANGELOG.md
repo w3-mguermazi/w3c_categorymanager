@@ -1,8 +1,15 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.  
+All notable changes to this project will be documented in this file.
 
 ---
+
+## [13.4.3] - 2025-08-31
+
+### Added
+- **Code Refactoring** Cleaned up and refactored functionality for improved readability and maintainability.
+- **JS Notifications** Added notifications when a category’s visibility is toggled.
+- **Code Standards + PHP Sniffer** Ensured code follows established coding standards and passed PHP CodeSniffer checks.
 
 ## [13.4.2] - 2025-08-29
 
@@ -18,7 +25,7 @@ All notable changes to this project will be documented in this file.
 - **Persisted expand/collapse state** of categories in the tree view, stored in backend user preferences.
 
 ### Removed
-- **"Add subcategory" button** when viewing categories in a non-default language.  
+- **"Add subcategory" button** when viewing categories in a non-default language.
   Creating subcategories without a corresponding record in the default language is not possible, so the button has been removed for consistency.
 
 ---
@@ -26,7 +33,7 @@ All notable changes to this project will be documented in this file.
 ## [13.4.0] - 2025-08-28
 
 ### Added
-- Initial stable release of the extension.  
-- Category management with tree view.  
-- Intuitive backend module navigation.  
+- Initial stable release of the extension.
+- Category management with tree view.
+- Intuitive backend module navigation.
 - Support for TYPO3 v13.4

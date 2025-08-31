@@ -4,7 +4,6 @@ services:
     autoconfigure: true
     public: true
 
-  W3code\W3cCategorymanager\:
+  W3code\W3cCategoryManager\:
     resource: '../Classes/*'
-    exclude:
-    - '../Classes/Domain/Model/*'
+    exclude: '../Classes/Domain/Model/*'

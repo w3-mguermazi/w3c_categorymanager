@@ -1,67 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.0">
-  <file source-language="en" datatype="plaintext" original="messages" date="2025-08-26T00:00:00Z" product-name="w3c_categorymanager">
-    <header/>
-    <body>
+    <file source-language="en" datatype="plaintext" original="messages" date="2025-08-26T00:00:00Z" product-name="w3c_category_manager">
+        <header/>
+        <body>
 
-      <!-- Module title -->
-      <trans-unit id="module.title" resname="module.title">
-        <source>Category Manager</source>
-        <target>Category Manager</target>
-      </trans-unit>
+            <!-- Module title -->
+            <trans-unit id="module.title">
+                <source>Category Manager</source>
+            </trans-unit>
 
-      <!-- Category actions -->
-      <trans-unit id="category.edit" resname="category.edit">
-        <source>Edit category</source>
-        <target>Edit category</target>
-      </trans-unit>
+            <!-- Category actions -->
+            <trans-unit id="category.new">
+                <source>Create new category</source>
+            </trans-unit>
+            <trans-unit id="category.edit">
+                <source>Edit category</source>
+            </trans-unit>
+            <trans-unit id="category.newChild">
+                <source>New subcategory</source>
+            </trans-unit>
+            <trans-unit id="category.translate_to">
+                <source>Translate to</source>
+            </trans-unit>
+            <trans-unit id="category.success">
+                <source>Category visibility updated successfully.</source>
+            </trans-unit>
+            <trans-unit id="category.noneFound">
+                <source>No categories found</source>
+            </trans-unit>
+            <trans-unit id="language.switch">
+                <source>Switch language</source>
+            </trans-unit>
+            <trans-unit id="sorting.dropdownLabel">
+                <source>Sorting</source>
+            </trans-unit>
+            <trans-unit id="sorting.title">
+                <source>Title</source>
+            </trans-unit>
+            <trans-unit id="sorting.sorting">
+                <source>Sorting</source>
+            </trans-unit>
+            <trans-unit id="sorting.direction.asc">
+                <source>Ascending</source>
+            </trans-unit>
+            <trans-unit id="sorting.direction.desc">
+                <source>Descending</source>
+            </trans-unit>
 
-      <trans-unit id="category.newChild" resname="category.newChild">
-        <source>New subcategory</source>
-        <target>New subcategory</target>
-      </trans-unit>
-
-      <trans-unit id="category.translate_to" resname="category.translate_to">
-        <source>Translate to</source>
-        <target>Translate to</target>
-      </trans-unit>
-
-      <!-- No categories -->
-      <trans-unit id="category.noneFound" resname="category.noneFound">
-        <source>No categories found</source>
-        <target>No categories found</target>
-      </trans-unit>
-
-      <trans-unit id="language.switch" resname="language.switch">
-        <source>Switch language</source>
-        <target>Switch language</target>
-      </trans-unit>
-
-      <trans-unit id="sorting.dropdownLabel" resname="sorting.dropdownLabel">
-        <source>Sorting</source>
-        <target>Sorting</target>
-      </trans-unit>
-
-      <trans-unit id="sorting.title" resname="sorting.title">
-        <source>Title</source>
-        <target>Title</target>
-      </trans-unit>
-
-      <trans-unit id="sorting.sorting" resname="sorting.sorting">
-        <source>Sorting</source>
-        <target>Sorting</target>
-      </trans-unit>
-
-      <trans-unit id="sorting.direction.ASC" resname="sorting.direction.ASC">
-        <source>Ascending</source>
-        <target>Ascending</target>
-      </trans-unit>
-
-      <trans-unit id="sorting.direction.DESC" resname="sorting.direction.DESC">
-        <source>Descending</source>
-        <target>Descending</target>
-      </trans-unit>
-
-    </body>
-  </file>
+        </body>
+    </file>
 </xliff>

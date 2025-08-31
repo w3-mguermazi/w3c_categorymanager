@@ -1,0 +1,32 @@
+<html
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+    data-namespace-typo3-fluid="true">
+
+    <f:layout name="Module" />
+
+    <f:section name="Content">
+
+        <div class="w3c_category_manager">
+            <div class="wrapper">
+                <h1>
+                    <f:translate key="module.title" />
+                </h1>
+
+                <f:if condition="{categories}">
+                    <f:then>
+                        <ul class="category-tree">
+                            <f:for each="{categories}" as="category">
+                                <f:render partial="CategoryTree" section="categoryTree" arguments="{category:category, currentLanguage:currentLanguage, siteLanguages:siteLanguages}" />
+                            </f:for>
+                        </ul>
+                    </f:then>
+                    <f:else>
+                        <f:translate key="category.noneFound" />
+                    </f:else>
+                </f:if>
+            </div>
+        </div>
+    </f:section>
+
+</html>

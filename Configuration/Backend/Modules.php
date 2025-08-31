@@ -1,22 +1,26 @@
 <?php
 
+use W3code\W3cCategoryManager\Controller\AjaxModuleController;
+use W3code\W3cCategoryManager\Controller\ModuleController;
+
 return [
-    'web_W3cCategoryManager' => [
-        'parentIdentifier' => 'web', // sous le menu WEB
+    'web_w3c_category_manager' => [
+        'parentIdentifier' => 'web',
         'position' => ['after' => 'web_list'],
-        'navigationComponent' => '',
-        'navigationComponentId' => '',
-        'inheritNavigationComponentFromMainModule' => 'false',
+        'access' => 'user,group',
         'workspaces' => 'live',
         'identifier' => 'web_W3cCategoryManager',
-        'access' => 'user',
-        'path' => '/module/web/w3ccategorymanager',
-        'labels' => 'LLL:EXT:w3c_categorymanager/Resources/Private/Language/locallang_mod.xlf',
-        'extensionName' => 'W3cCategorymanager',
+        'path' => '/module/W3cCategoryManager',
+        'labels' => 'LLL:EXT:w3c_category_manager/Resources/Private/Language/locallang_mod.xlf',
+        'extensionName' => 'W3cCategoryManager',
         'iconIdentifier' => 'mimetypes-x-sys_category',
         'controllerActions' => [
-            'W3code\W3cCategorymanager\Controller\CategoryModuleController' => [
-                'main'
+            ModuleController::class => [
+                'index',
+            ],
+            AjaxModuleController::class => [
+                'toggleHide',
+                'toggleExpand',
             ],
         ],
     ],
