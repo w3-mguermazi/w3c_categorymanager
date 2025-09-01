@@ -1,5 +1,5 @@
 {
-    "name": "w3code/w3c-category-manager",
+    "name": "w3code/w3c-categorymanager",
     "type": "typo3-cms-extension",
     "description": "Manage system categories easily with a category tree",
     "keywords": [
@@ -12,6 +12,10 @@
         {
             "name": "Mehdi Guermazi",
             "email": "mehdi.guermazi@w3code.tn"
+        },
+        {
+            "name": "Haythem Daoud",
+            "email": "haythem.daoud@w3code.tn"
         }
     ],
     "license": [
@@ -31,7 +35,7 @@
         }
     },
     "replace": {
-        "typo3-ter/w3c_category_manager": "self.version"
+        "typo3-ter/w3c_categorymanager": "self.version"
     },
     "config": {
         "vendor-dir": ".Build/vendor",
@@ -53,7 +57,7 @@
     },
     "extra": {
         "typo3/cms": {
-            "extension-key": "w3c_category_manager",
+            "extension-key": "w3c_categorymanager",
             "web-dir": ".Build/Web"
         }
     }

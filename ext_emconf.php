@@ -1,10 +1,10 @@
 <?php
 
-$EM_CONF['w3c_category_manager'] = [
+$EM_CONF['w3c_categorymanager'] = [
     'title' => 'Category manager',
     'description' => 'Manage system categories easily with a category tree',
     'category' => 'module',
-    'state' => 'beta',
+    'state' => 'stable',
     'author' => 'Mehdi Guermazi',
     'author_email' => 'mehdi.guermazi@w3code.tn',
     'author_company' => 'W3CODE',

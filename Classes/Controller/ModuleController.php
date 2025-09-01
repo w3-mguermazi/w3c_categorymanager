@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the "w3c_category_manager" Extension for TYPO3 CMS.
+ * This file is part of the "w3c_categorymanager" Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
@@ -39,6 +39,7 @@ use W3code\W3cCategoryManager\Utility\SortingUtility;
  * Class ModuleController
  *
  * @author Mehdi Guermazi <mehdi.guermazi@w3code.tn>
+ * @author Haythem Daoud <haythem.daoud@w3code.tn>
  */
 #[AsController]
 class ModuleController extends ActionController
@@ -136,7 +137,7 @@ class ModuleController extends ActionController
                     GeneralUtility::makeInstance(DropDownItem::class)
                         ->setLabel($lang->getNavigationTitle())
                         ->setHref((string)$this->getUriBuilder()->buildUriFromRoute(
-                            'web_w3c_category_manager',
+                            'web_w3c_categorymanager',
                             [
                                 'id' => $this->pid,
                                 'sys_language_uid' => $lang->getLanguageId(),
@@ -176,7 +177,7 @@ class ModuleController extends ActionController
                 . ' ' . LocalizationUtility::translate('sorting.direction.' . strtolower($option))
             )
             ->setHref((string)$this->getUriBuilder()->buildUriFromRoute(
-                'web_w3c_category_manager',
+                'web_w3c_categorymanager',
                 [
                     'id' => $this->pid,
                     'sys_language_uid' => $this->currentLanguage,

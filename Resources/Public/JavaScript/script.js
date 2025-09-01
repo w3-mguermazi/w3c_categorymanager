@@ -8,7 +8,7 @@ const getIcon = (identifier, size = Icons.sizes.small) => {
 };
 
 $(function () {
-  const $wrapper = $('.w3c_category_manager');
+  const $wrapper = $('.w3c_categorymanager');
   const $buttons = $('.toggle-category');
 
   if (!$wrapper.length || !$buttons.length) return;
@@ -29,7 +29,7 @@ $(function () {
     $button.on('click', function () {
       hidden = $button.data('state');
       const data = { uid: uid, hidden: hidden ^ 1 };
-      const request = new AjaxRequest(TYPO3.settings.ajaxUrls['w3c_category_manager_toggle_hide']);
+      const request = new AjaxRequest(TYPO3.settings.ajaxUrls['w3c_categorymanager_toggle_hide']);
 
       let promise = request.post(data);
 
@@ -58,7 +58,7 @@ $(function () {
     const state = this.open ? 1 : 0;
 
     const data = { uid: uid, state: state };
-    const request = new AjaxRequest(TYPO3.settings.ajaxUrls['w3c_category_manager_toggle_expand']);
+    const request = new AjaxRequest(TYPO3.settings.ajaxUrls['w3c_categorymanager_toggle_expand']);
 
     let promise = request.post(data);
 
