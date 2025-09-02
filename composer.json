@@ -1,35 +1,64 @@
 {
     "name": "w3code/w3c-categorymanager",
-    "description": "Manage system categories easily with a category tree",
     "type": "typo3-cms-extension",
-    "license": "GPL-2.0-or-later",
+    "description": "Manage system categories easily with a category tree",
+    "keywords": [
+        "TYPO3",
+        "extension",
+        "backend",
+        "categories"
+    ],
     "authors": [
         {
             "name": "Mehdi Guermazi",
             "email": "mehdi.guermazi@w3code.tn"
+        },
+        {
+            "name": "Haythem Daoud",
+            "email": "haythem.daoud@w3code.tn"
         }
     ],
-    "replace": {
-        "typo3-ter/w3c_categorymanager": "self.version"
-    },
+    "license": [
+        "GPL-3.0-or-later"
+    ],
     "require": {
-        "typo3/cms-core": "^12.4 || ^13.4"
+        "php": ">= 8.1 < 8.4",
+        "typo3/cms-core": "^12.4 || ^13.4 || dev-main"
+    },
+    "require-dev": {
+        "typo3/coding-standards": "^0.8.0",
+        "friendsofphp/php-cs-fixer": "^3.86.0"
     },
     "autoload": {
         "psr-4": {
-            "W3code\\W3cCategorymanager\\": "Classes/"
+            "W3code\\W3cCategoryManager\\": "Classes/"
         }
     },
+    "replace": {
+        "typo3-ter/w3c_categorymanager": "self.version"
+    },
     "config": {
+        "vendor-dir": ".Build/vendor",
+        "bin-dir": ".Build/bin",
         "allow-plugins": {
             "typo3/class-alias-loader": true,
             "typo3/cms-composer-installers": true
         },
         "sort-packages": true
     },
+    "scripts": {
+        "post-install-cmd":  [
+            "chmod +x .githooks/pre-commit",
+            "git init",
+            "git config --local core.hooksPath .githooks/"
+        ],
+        "php:cs": "php-cs-fixer fix --config=Build/php-cs-fixer.php -v --dry-run --using-cache no --diff",
+        "php:fix": "php-cs-fixer fix --config=Build/php-cs-fixer.php"
+    },
     "extra": {
         "typo3/cms": {
-            "extension-key": "w3c_categorymanager"
+            "extension-key": "w3c_categorymanager",
+            "web-dir": ".Build/Web"
         }
     }
 }

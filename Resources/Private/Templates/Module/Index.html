@@ -1,0 +1,37 @@
+<html
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+    data-namespace-typo3-fluid="true">
+
+    <f:layout name="Module" />
+
+    <f:section name="Content">
+
+        <div class="w3c_categorymanager">
+            <div class="wrapper">
+                <header class="category-header">
+                    <h1>
+                        <f:translate key="module.title" extensionName="w3c_categorymanager" />
+                    </h1>
+                    <f:form.textfield id="w3c_categorymanager_filter" value="{filter}" autocomplete="off" placeholder="{f:translate(key: 'filter.placeholder', extensionName: 'w3c_categorymanager')}" />
+                </header>
+                
+
+                <f:if condition="{categories}">
+                    <f:then>
+                        <f:form.hidden id="w3c_categorymanager_move_message" value="{f:translate(key: 'category.move.target', extensionName: 'w3c_categorymanager')}" />
+                        <ul class="category-tree">
+                            <f:for each="{categories}" as="category">
+                                <f:render partial="CategoryTree" section="categoryTree" arguments="{category:category, currentLanguage:currentLanguage, siteLanguages:siteLanguages, returnUrl:returnUrl, sorting:sorting}" />
+                            </f:for>
+                        </ul>
+                    </f:then>
+                    <f:else>
+                        <f:translate key="category.noneFound" extensionName="w3c_categorymanager"/>
+                    </f:else>
+                </f:if>
+            </div>
+        </div>
+    </f:section>
+
+</html>

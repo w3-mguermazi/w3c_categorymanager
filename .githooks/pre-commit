@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Pre-commit Git hook
+
+# Install all before tests
+composer install
+
+composer php:cs
+if [[ $? != 0 ]]; then
+ 	exit 1
+fi

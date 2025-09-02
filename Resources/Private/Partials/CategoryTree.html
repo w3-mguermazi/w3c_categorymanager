@@ -1,0 +1,68 @@
+<html
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+    xmlns:w3c="http://typo3.org/ns/W3code\W3cCategoryManager/ViewHelpers"
+    data-namespace-typo3-fluid="true">
+
+    <f:section name="categoryTree">
+        <li data-uid="{f:if(condition: '{currentLanguage} == 0', then: '{category.uid}', else: '{category.localizedUid}')}" >
+            <f:if condition="{category.children}">
+                <f:then>
+                    <details data-expanded="{category.expanded}" data-uid="{f:if(condition: '{currentLanguage} == 0', then: '{category.uid}', else: '{category.localizedUid}')}" {f:if(condition: category.expanded, then: 'open')}>
+                        <summary>
+                            <f:render section="UlBlock" arguments="{category:category, currentLanguage:currentLanguage, siteLanguages:siteLanguages, returnUrl:returnUrl, sorting:sorting}" />
+                        </summary>
+                        <ul>
+                            <f:for each="{category.children}" as="child">
+                                <f:render section="categoryTree" arguments="{category:child, currentLanguage:currentLanguage, siteLanguages:siteLanguages, returnUrl:returnUrl, sorting:sorting}" />
+                            </f:for>
+                        </ul>
+                    </details>
+                </f:then>
+                <f:else>
+                    <f:render section="UlBlock" arguments="{category:category, currentLanguage:currentLanguage, siteLanguages:siteLanguages, returnUrl:returnUrl, sorting:sorting}" />
+                </f:else>
+            </f:if>
+        </li>
+    </f:section>
+
+    <f:section name="UlBlock">
+        <f:variable name="categoryUid" value="{f:if(condition: '{currentLanguage} == 0', then: '{category.uid}', else: '{category.localizedUid}')}" />
+
+        <div class="line">
+            <button class="toggle-category" data-uid="{categoryUid}" data-state="{category.hidden}">
+                <!-- Icon injected via JavaScript -->
+            </button>
+            <span>{category.title}</span>
+            <span class="buttons">
+                <f:if condition="{currentLanguage} == 0 && {f:count(siteLanguages) > 0}">
+                     <f:for each="{siteLanguages}" as="language">
+                         <f:if condition="!{w3c:checkIfCategoryTranslated(category:category, language:language)}">
+                             <a href="{be:uri.newRecord(table:'sys_category', pid:category.pid, returnUrl:returnUrl,
+                             defaultValues:'{sys_category: {parent:category.parent.uid, l10n_parent:category.uid, sys_language_uid:language.languageId}}')}"
+                                title="{f:translate(key:'category.translate_to', extensionName:'w3c_categorymanager')} {language.title}" role="button" class="btn btn-sm btn-default">
+                                <core:icon identifier="{language.flagIdentifier}" size="small"/>
+                            </a>
+                         </f:if>
+                     </f:for>
+                </f:if>
+                <a href="{be:uri.editRecord(table:'sys_category', uid:categoryUid, returnUrl:returnUrl)}"
+                   title="{f:translate(key:'category.edit', extensionName:'w3c_categorymanager')}" role="button" class="btn btn-sm btn-default">
+                    <core:icon identifier="actions-document-open" size="small"/>
+                </a>
+                <f:if condition="{currentLanguage} == 0">
+                    <a href="{be:uri.newRecord(table:'sys_category', pid:category.pid, returnUrl:returnUrl, defaultValues:'{sys_category: {parent:category.uid}}')}"
+                       title="{f:translate(key:'category.newChild', extensionName:'w3c_categorymanager')}" role="button" class="btn btn-sm btn-default">
+                        <core:icon identifier="actions-document-new" size="small"/>
+                    </a>
+                </f:if>
+                <f:if condition="{sorting} == 'sorting'">
+                    <a href="#" class="btn btn-sm btn-default move-category" data-uid="{categoryUid}" title="{f:translate(key:'category.move', extensionName:'w3c_categorymanager')}">
+                        <core:icon identifier="actions-file-move" size="small"/>
+                    </a>
+                </f:if>
+            </span>
+        </div>
+    </f:section>
+
+</html>

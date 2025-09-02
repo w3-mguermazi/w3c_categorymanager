@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.0">
+    <file source-language="en" target-language="fr" datatype="plaintext" original="messages" date="2025-08-26T00:00:00Z" product-name="w3c_categorymanager">
+        <header/>
+        <body>
+            <!-- Titre du module -->
+            <trans-unit id="module.title" approved="yes">
+                <target state="translated">Gestionnaire de catégories</target>
+            </trans-unit>
+
+            <!-- Actions sur les catégories -->
+            <trans-unit id="category.new" approved="yes">
+                <target state="translated">Créer une nouvelle catégorie</target>
+            </trans-unit>
+            <trans-unit id="category.edit" approved="yes">
+                <target state="translated">Modifier la catégorie</target>
+            </trans-unit>
+            <trans-unit id="category.newChild" approved="yes">
+                <target state="translated">Nouvelle sous-catégorie</target>
+            </trans-unit>
+            <trans-unit id="category.move" approved="yes">
+                <target state="translated">Déplacer la catégorie</target>
+            </trans-unit>
+            <trans-unit id="category.move.target" approved="yes">
+                <target state="translated">Déplacer la catégorie ici</target>
+            </trans-unit>
+            <trans-unit id="category.translate_to" approved="yes">
+                <target state="translated">Traduire à</target>
+            </trans-unit>
+            <trans-unit id="category.success" approved="yes">
+                <target state="translated">La visibilité de la catégorie a été mise à jour avec succès.</target>
+            </trans-unit>
+            <trans-unit id="category.noneFound" approved="yes">
+                <target state="translated">Aucune catégorie trouvée</target>
+            </trans-unit>
+            <trans-unit id="language.switch" approved="yes">
+                <target state="translated">Changer de langue</target>
+            </trans-unit>
+            <trans-unit id="sorting.dropdownLabel" approved="yes">
+                <target state="translated">Trier par</target>
+            </trans-unit>
+            <trans-unit id="sorting.title" approved="yes">
+                <target state="translated">Titre</target>
+            </trans-unit>
+            <trans-unit id="sorting.sorting" approved="yes">
+                <target state="translated">Champ de tri</target>
+            </trans-unit>
+            <trans-unit id="sorting.direction.asc" approved="yes">
+                <target state="translated">Ascendant</target>
+            </trans-unit>
+            <trans-unit id="sorting.direction.desc" approved="yes">
+                <target state="translated">Descandant</target>
+            </trans-unit>
+            <trans-unit id="filter.placeholder" approved="yes">
+                <target state="translated">Filtrer les catégories</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
