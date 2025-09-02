@@ -18,6 +18,12 @@
             <trans-unit id="category.newChild" approved="yes">
                 <target state="translated">Nouvelle sous-catégorie</target>
             </trans-unit>
+            <trans-unit id="category.move" approved="yes">
+                <target state="translated">Déplacer la catégorie</target>
+            </trans-unit>
+            <trans-unit id="category.move.target" approved="yes">
+                <target state="translated">Déplacer la catégorie ici</target>
+            </trans-unit>
             <trans-unit id="category.translate_to" approved="yes">
                 <target state="translated">Traduire à</target>
             </trans-unit>
@@ -44,6 +50,9 @@
             </trans-unit>
             <trans-unit id="sorting.direction.desc" approved="yes">
                 <target state="translated">Descandant</target>
+            </trans-unit>
+            <trans-unit id="filter.placeholder" approved="yes">
+                <target state="translated">Filtrer les catégories</target>
             </trans-unit>
         </body>
     </file>

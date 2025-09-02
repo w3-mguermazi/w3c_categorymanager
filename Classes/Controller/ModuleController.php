@@ -159,9 +159,6 @@ class ModuleController extends ActionController
             $sortingDropDownButton->addItem(
                 $this->makeDropdownButton($sortingOption, 'ASC')
             );
-            $sortingDropDownButton->addItem(
-                $this->makeDropdownButton($sortingOption, 'DESC')
-            );
         }
         $buttonBar->addButton($sortingDropDownButton, ButtonBar::BUTTON_POSITION_RIGHT, 2);
     }
@@ -182,7 +179,6 @@ class ModuleController extends ActionController
                     'id' => $this->pid,
                     'sys_language_uid' => $this->currentLanguage,
                     'sortingBy' => $label,
-                    'direction' => $option,
                 ]
             ));
     }
@@ -203,6 +199,7 @@ class ModuleController extends ActionController
             'currentLanguage' => $this->currentLanguage,
             'siteLanguages' => $this->siteLanguages,
             'returnUrl' => $this->returnUrl,
+            'sorting' => $this->sorting['sortingBy'],
         ]);
 
         return $this->moduleTemplate->renderResponse('Module/Index');

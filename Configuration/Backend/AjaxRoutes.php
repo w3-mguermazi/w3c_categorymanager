@@ -11,4 +11,8 @@ return [
         'path' => '/module/W3cCategoryManager/ToggleExpand',
         'target' => AjaxModuleController::class . '::toggleExpandAction',
     ],
+    'w3c_categorymanager_move' => [
+        'path' => '/w3c/W3cCategoryManager/move',
+        'target' => AjaxModuleController::class . '::moveAction'
+    ],
 ];

@@ -19,6 +19,12 @@
             <trans-unit id="category.newChild">
                 <source>New subcategory</source>
             </trans-unit>
+            <trans-unit id="category.move">
+                <source>Move category</source>
+            </trans-unit>
+            <trans-unit id="category.move.target">
+                <source>Move category here</source>
+            </trans-unit>
             <trans-unit id="category.translate_to">
                 <source>Translate to</source>
             </trans-unit>
@@ -45,6 +51,9 @@
             </trans-unit>
             <trans-unit id="sorting.direction.desc">
                 <source>Descending</source>
+            </trans-unit>
+            <trans-unit id="filter.placeholder">
+                <source>Filter categories</source>
             </trans-unit>
 
         </body>

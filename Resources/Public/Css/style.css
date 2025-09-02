@@ -1,6 +1,7 @@
 .w3c_categorymanager .wrapper{
-    padding: 2em;
+    padding: 0 2em;
     font-size: 1.4em;
+    margin-right: 15rem;
 }
 
 .w3c_categorymanager .category-tree {
@@ -48,7 +49,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-right: 15rem;
 }
 
 .w3c_categorymanager .category-tree .line:hover {
@@ -88,6 +88,10 @@
   background: #ddd;
 }
 
+.w3c_categorymanager .category-tree li.move-arrow-li::after {
+  content: none;
+}
+
 .w3c_categorymanager .category-tree summary::before {
   z-index: 1;
   background: #696 url('../Icons/expand-collapse.svg') 0 0;
@@ -102,3 +106,44 @@
     background: transparent;
 }
 
+.w3c_categorymanager .category-header {
+  display: flex;
+  justify-content: space-between; /* espace entre h1 et input */
+  align-items: center;            /* alignement vertical */
+  padding-bottom: 1rem;
+}
+
+.w3c_categorymanager .category-header h1 {
+  margin: 0; /* éviter que le margin du h1 pousse la ligne */
+}
+
+.w3c_categorymanager .category-header input {
+  max-width: 250px; /* ajuste selon ton design */
+}
+
+.w3c_categorymanager .category-tree li.cut-active .line{
+  background-image: repeating-linear-gradient(
+    45deg, /* Direction of the gradient, 'to right' for vertical stripes */
+    #F5F5F5, /* Color of the first stripe */
+    #F5F5F5 4px, /* End position of the first stripe */
+    #f9ebb6 4px, /* Start position of the second stripe */
+    #f9ebb6 10px /* End position of the second stripe  */
+  );
+}
+
+.w3c_categorymanager .category-tree li .move-arrow {
+  background-color: #fffae6;
+  display: block;
+  margin: 0.5rem 0;
+  padding: 0 0.5rem;
+}
+
+.w3c_categorymanager .category-tree li .move-arrow:hover{
+  background-image: repeating-linear-gradient(
+    45deg, /* Direction of the gradient, 'to right' for vertical stripes */
+    #F5F5F5, /* Color of the first stripe */
+    #F5F5F5 4px, /* End position of the first stripe */
+    #f9ebb6 4px, /* Start position of the second stripe */
+    #f9ebb6 10px /* End position of the second stripe  */
+  );
+}

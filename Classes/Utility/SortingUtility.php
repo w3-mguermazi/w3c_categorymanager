@@ -24,7 +24,7 @@ class SortingUtility
             'title',
             'sorting',
         ],
-        'sortingBy' => 'title',
+        'sortingBy' => 'sorting',
         'direction' => 'ASC',
     ];
 

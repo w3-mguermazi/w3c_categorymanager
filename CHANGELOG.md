@@ -4,12 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [13.4.3] - 2025-08-31
+## [13.4.3] - 2025-09-01
 
 ### Added
 - **Code Refactoring** Cleaned up and refactored functionality for improved readability and maintainability.
 - **JS Notifications** Added notifications when a category’s visibility is toggled.
 - **Code Standards + PHP Sniffer** Ensured code follows established coding standards and passed PHP CodeSniffer checks.
+- **Keyword filter feature** Quickly find categories by typing part of their name.
+- **Category ordering with cut and move** Reorganize categories within the same level using cut and move controls.
 
 ## [13.4.2] - 2025-08-29
 

@@ -22,6 +22,8 @@ use W3code\W3cCategoryManager\Domain\Model\Category;
 use W3code\W3cCategoryManager\Domain\Repository\CategoryRepository;
 use W3code\W3cCategoryManager\Utility\BackendUserUtility;
 use W3code\W3cCategoryManager\Utility\LocalizationUtility;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class AjaxModuleController
@@ -133,4 +135,42 @@ class AjaxModuleController extends ActionController
 
         return $response;
     }
+
+    public function moveAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $cutUid = (int)$request->getParsedBody()['cutUid'];
+        $targetUid = (int)$request->getParsedBody()['targetUid'];
+        $pid = (int)$request->getParsedBody()['pid'];
+
+        if ($cutUid > 0 && $targetUid >= 0) {
+
+            $cmd = [];
+            $cmd['sys_category'][$cutUid]['move'] = - $targetUid;
+            if($targetUid === 0){
+                $cmd['sys_category'][$cutUid]['move'] = $pid;
+            }
+
+            $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
+            $dataHandler->start([], $cmd);
+            $dataHandler->process_cmdmap();
+
+            $result = [
+                'success' => true,
+                'uid' => $cutUid,
+                'target' => $targetUid,
+                'pid' => $pid
+            ];
+        } else {
+            $result = [
+                'success' => false,
+            ];
+        }
+
+        $response = $this->responseFactory->createResponse()
+            ->withHeader('Content-Type', 'application/json; charset=utf-8');
+        $response->getBody()->write(json_encode($result, JSON_THROW_ON_ERROR));
+
+        return $response;
+    }
+
 }
