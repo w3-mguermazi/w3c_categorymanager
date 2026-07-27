@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [14.3.0] - 2026-07-27
+
+### Added
+- **TYPO3 14 compatibility** version compatible with TYPO3 14
+
 ## [13.4.3] - 2025-09-01
 
 ### Added

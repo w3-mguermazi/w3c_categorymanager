@@ -1,12 +1,8 @@
 <?php
 
 declare(strict_types=1);
-
 /*
  * This file is part of the "w3c_categorymanager" Extension for TYPO3 CMS.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
  */
 
 namespace W3code\W3cCategoryManager\Controller;
@@ -17,7 +13,7 @@ use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
-use TYPO3\CMS\Backend\Template\Components\Buttons\DropDown\DropDownItem;
+use TYPO3\CMS\Backend\Template\Components\Buttons\DropDown\DropDownItemInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
@@ -25,7 +21,6 @@ use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Imaging\IconSize;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -34,41 +29,31 @@ use W3code\W3cCategoryManager\Domain\Repository\CategoryRepository;
 use W3code\W3cCategoryManager\Service\CategoryService;
 use W3code\W3cCategoryManager\Utility\LocalizationUtility;
 use W3code\W3cCategoryManager\Utility\SortingUtility;
+use TYPO3\CMS\Backend\Template\Components\ComponentFactory;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 
-/**
- * Class ModuleController
- *
- * @author Mehdi Guermazi <mehdi.guermazi@w3code.tn>
- * @author Haythem Daoud <haythem.daoud@w3code.tn>
- */
 #[AsController]
 class ModuleController extends ActionController
 {
-    protected ModuleTemplate $moduleTemplate;
     protected QuerySettingsInterface $querySettings;
 
     protected int $pid = 0;
     protected array $sorting = [];
     private array $siteLanguages = [];
-    protected int $currentLanguage;
-    protected string $returnUrl;
+    protected int $currentLanguage = 0;
+    protected string $returnUrl = '';
 
-    /**
-     * @param ModuleTemplateFactory $moduleTemplateFactory
-     * @param CategoryRepository $categoryRepository
-     * @param CategoryService $categoryService
-     * @param IconFactory $iconFactory
-     */
     public function __construct(
-        protected ModuleTemplateFactory $moduleTemplateFactory,
-        protected CategoryRepository $categoryRepository,
-        protected CategoryService $categoryService,
-        private readonly IconFactory $iconFactory
+        protected readonly ModuleTemplateFactory $moduleTemplateFactory,
+        protected readonly CategoryRepository $categoryRepository,
+        protected readonly CategoryService $categoryService,
+        private readonly IconFactory $iconFactory,
+        protected readonly UriBuilder $backendUriBuilder,
+        private readonly ComponentFactory $componentFactory
     ) {}
 
     /**
      * @throws SiteNotFoundException
-     * @throws RouteNotFoundException
      */
     public function initializeAction(): void
     {
@@ -79,8 +64,6 @@ class ModuleController extends ActionController
         }
 
         $this->querySettings = $this->categoryRepository->createQuery()->getQuerySettings();
-        $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $this->moduleTemplate->setTitle(LocalizationUtility::translate('module.title'));
         $this->sorting = SortingUtility::get();
 
         if (!empty($this->request->getQueryParams())) {
@@ -98,23 +81,53 @@ class ModuleController extends ActionController
         }
 
         $this->setReturnUrl();
-        $this->setDocHeader();
 
         parent::initializeAction();
     }
 
     /**
+     * @return ResponseInterface
      * @throws RouteNotFoundException
      */
-    protected function setDocHeader(): void
+    public function indexAction(): ResponseInterface
     {
-        $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->setTitle(LocalizationUtility::translate('module.title'));
+        
+        // 1. CORRECTION : Réactivation de l'appel pour configurer le DocHeader
+        $this->configureDocHeader($moduleTemplate);
 
-        // Add new Category button
-        $newCategoryButton = $buttonBar->makeLinkButton()
+        $categories = $this->categoryService->getCategories(
+            $this->pid,
+            $this->currentLanguage,
+            $this->sorting
+        );
+
+        $moduleTemplate->assignMultiple([
+            'categories' => $categories,
+            'currentLanguage' => $this->currentLanguage,
+            'siteLanguages' => $this->siteLanguages,
+            'returnUrl' => $this->returnUrl,
+            'sorting' => $this->sorting['sortingBy'],
+        ]);
+
+        return $moduleTemplate->renderResponse('Module/Index');
+    }
+
+    /**
+     * Configure action buttons in the DocHeader.
+     *
+     * @throws RouteNotFoundException
+     */
+    protected function configureDocHeader(ModuleTemplate $moduleTemplate): void
+    {
+        $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
+
+        // New Category button
+        $newCategoryButton = $this->componentFactory->createLinkButton()
             ->setTitle(LocalizationUtility::translate('category.new'))
             ->setIcon($this->getIconByIdentifier('actions-document-new'))
-            ->setHref($this->getUriBuilder()->buildUriFromRoute(
+            ->setHref((string)$this->backendUriBuilder->buildUriFromRoute(
                 'record_edit',
                 [
                     'edit' => ['sys_category' => [$this->pid => 'new']],
@@ -124,41 +137,41 @@ class ModuleController extends ActionController
             ));
         $buttonBar->addButton($newCategoryButton, ButtonBar::BUTTON_POSITION_RIGHT, 2);
 
-        // Add language button dropdown
-        if ($this->pid != 0 && count($this->siteLanguages) > 0) {
-
-            $languagesDropDownButton = $buttonBar->makeDropDownButton()
+        // Language selector dropdown
+        if ($this->pid !== 0 && count($this->siteLanguages) > 0) {
+            // 2. CORRECTION : Remplacement par l'API moderne ComponentFactory pour harmoniser les DropDowns
+            $languagesDropDownButton = $this->componentFactory->createDropDownButton()
                 ->setLabel(LocalizationUtility::translate('language.switch'))
                 ->setTitle(LocalizationUtility::translate('language.switch'))
                 ->setIcon($this->getIconByIdentifier('module-lang'));
-
             foreach ($this->siteLanguages as $lang) {
-                $languagesDropDownButton->addItem(
-                    GeneralUtility::makeInstance(DropDownItem::class)
-                        ->setLabel($lang->getNavigationTitle())
-                        ->setHref((string)$this->getUriBuilder()->buildUriFromRoute(
-                            'web_w3c_categorymanager',
-                            [
-                                'id' => $this->pid,
-                                'sys_language_uid' => $lang->getLanguageId(),
-                            ]
-                        ))
-                );
+                $item = $this->componentFactory->createDropDownItem()
+                    ->setLabel($lang->getNavigationTitle())
+                    ->setHref((string)$this->backendUriBuilder->buildUriFromRoute(
+                        'content_w3ccategorymanager',
+                        [
+                            'id' => $this->pid,
+                            'sys_language_uid' => $lang->getLanguageId(),
+                        ]
+                    ));
+                /** @var DropDownItemInterface $item */
+                $languagesDropDownButton->addItem($item);
             }
 
             $buttonBar->addButton($languagesDropDownButton, ButtonBar::BUTTON_POSITION_RIGHT, 2);
         }
 
-        // add sorting button dropdown
-        $sortingDropDownButton = $buttonBar->makeDropDownButton()
+        // Sorting options dropdown
+        // 3. CORRECTION : Remplacement par l'API moderne ComponentFactory
+        $sortingDropDownButton = $this->componentFactory->createDropDownButton()
             ->setLabel(LocalizationUtility::translate('sorting.dropdownLabel'))
             ->setTitle(LocalizationUtility::translate('sorting.dropdownLabel'))
             ->setIcon($this->getIconByIdentifier('actions-sort-amount'));
 
         foreach ($this->sorting['options'] as $sortingOption) {
-            $sortingDropDownButton->addItem(
-                $this->makeDropdownButton($sortingOption, 'ASC')
-            );
+            $item = $this->makeDropdownButton($sortingOption, 'ASC');
+            /** @var DropDownItemInterface $item */
+            $sortingDropDownButton->addItem($item);
         }
         $buttonBar->addButton($sortingDropDownButton, ButtonBar::BUTTON_POSITION_RIGHT, 2);
     }
@@ -166,80 +179,34 @@ class ModuleController extends ActionController
     /**
      * @throws RouteNotFoundException
      */
-    protected function makeDropdownButton(string $label, string $option)
+    protected function makeDropdownButton(string $label, string $option): DropDownItemInterface
     {
-        return GeneralUtility::makeInstance(DropDownItem::class)
+        $dropDown = $this->componentFactory->createDropDownItem()
             ->setLabel(
                 LocalizationUtility::translate('sorting.' . $label)
                 . ' ' . LocalizationUtility::translate('sorting.direction.' . strtolower($option))
             )
-            ->setHref((string)$this->getUriBuilder()->buildUriFromRoute(
-                'web_w3c_categorymanager',
+            ->setHref((string)$this->backendUriBuilder->buildUriFromRoute(
+                'content_w3ccategorymanager',
                 [
                     'id' => $this->pid,
                     'sys_language_uid' => $this->currentLanguage,
                     'sortingBy' => $label,
                 ]
             ));
-    }
-
-    /**
-     * @return ResponseInterface
-     */
-    public function indexAction(): ResponseInterface
-    {
-        $categories = $this->categoryService->getCategories(
-            $this->pid,
-            $this->currentLanguage,
-            $this->sorting
-        );
-
-        $this->moduleTemplate->assignMultiple([
-            'categories' => $categories,
-            'currentLanguage' => $this->currentLanguage,
-            'siteLanguages' => $this->siteLanguages,
-            'returnUrl' => $this->returnUrl,
-            'sorting' => $this->sorting['sortingBy'],
-        ]);
-
-        return $this->moduleTemplate->renderResponse('Module/Index');
+        /** @var DropDownItemInterface $dropDown */
+        return $dropDown;
     }
 
     private function setReturnUrl(): void
     {
         $this->returnUrl = (string)($this->request->getParsedBody()['returnUrl']
             ?? $this->request->getQueryParams()['returnUrl']
-            ?? null);
+            ?? '');
     }
 
-    /**
-     * @param string $key
-     * @return Icon
-     */
     private function getIconByIdentifier(string $key): Icon
     {
-        if ($this->getTypo3MajorVersion()) {
-            $icon = $this->iconFactory->getIcon($key, IconSize::SMALL);
-        } else {
-            $icon = $this->iconFactory->getIcon($key, Icon::SIZE_SMALL);
-        }
-
-        return $icon;
-    }
-
-    /**
-     * @return UriBuilder
-     */
-    protected function getUriBuilder(): UriBuilder
-    {
-        return GeneralUtility::makeInstance(UriBuilder::class);
-    }
-
-    /**
-     * @return bool
-     */
-    protected function getTypo3MajorVersion(): bool
-    {
-        return  GeneralUtility::makeInstance(Typo3Version::class)->getMajorVersion() > 12;
+        return $this->iconFactory->getIcon($key, IconSize::SMALL);
     }
 }

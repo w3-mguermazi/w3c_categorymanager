@@ -21,7 +21,6 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility as BaseLocalizationUtility;
  */
 class LocalizationUtility
 {
-    private const EXTENSION_NAME = 'w3c_categorymanager';
 
     /**
      * @param string $key
@@ -29,6 +28,6 @@ class LocalizationUtility
      */
     public static function translate(string $key): string
     {
-        return (string)BaseLocalizationUtility::translate($key, self::EXTENSION_NAME);
+        return (string)BaseLocalizationUtility::translate($key, 'W3cCategorymanager');
     }
 }
