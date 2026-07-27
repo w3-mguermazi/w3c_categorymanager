@@ -23,9 +23,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
  */
 class Category extends AbstractEntity
 {
-    /**
-     * @Extbase\Validate("NotEmpty")
-     */
+    #[Extbase\Validate(['validator' => 'NotEmpty'])]
     protected string $title = '';
     protected string $description = '';
     protected bool $expanded = false;
@@ -34,14 +32,10 @@ class Category extends AbstractEntity
     protected int $sysLanguageUid = 0;
     protected int $localizedUid = 0;
 
-    /**
-     * @Extbase\ORM\Lazy
-     */
+    #[Extbase\ORM\Lazy]
     protected Category|LazyLoadingProxy|null $parent = null;
 
-    /**
-     * @Extbase\ORM\Lazy
-     */
+    #[Extbase\ORM\Lazy]
     protected array $children = [];
 
     /**

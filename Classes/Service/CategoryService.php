@@ -25,14 +25,8 @@ class CategoryService
 {
     protected CategoryRepository $categoryRepository;
 
-    /**
-     * Injects the Category Repository
-     *
-     * @param CategoryRepository $categoryRepository An instance of the Category Repository
-     */
-    public function injectCategoryRepository(
-        CategoryRepository $categoryRepository
-    ): void {
+    public function __construct(\W3code\W3cCategoryManager\Domain\Repository\CategoryRepository $categoryRepository)
+    {
         $this->categoryRepository = $categoryRepository;
     }
 
